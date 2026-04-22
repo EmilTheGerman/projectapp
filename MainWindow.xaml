@@ -1,12 +1,219 @@
-﻿<Window x:Class="projectapp.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:projectapp"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+﻿<Window
+    x:Class="projectapp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Password Manager"
+    Width="1000"
+    Height="600"
+    Background="#F5F6FA"
+    WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="Background" Value="#6C63FF" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="BorderBrush" Value="#DCDDE1" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.1" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Background="#2F3542">
+
+            <TextBlock
+                Margin="10"
+                FontSize="16"
+                Foreground="White"
+                Text="Password Manager" />
+
+            <Button Content="Всі записи" />
+            <Button Content="Категорії" />
+            <Button Content="Пошук" />
+            <Button Content="Генератор" />
+            <Button Content="Налаштування" />
+
+        </StackPanel>
+
+        <Grid Grid.Column="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Background="White">
+                <TextBox
+                    x:Name="SearchBox"
+                    Width="250"
+                    Height="30"
+                    Margin="10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    TextChanged="SearchBox_TextChanged" />
+
+                <Button
+                    Width="120"
+                    Height="30"
+                    Margin="10"
+                    HorizontalAlignment="Right"
+                    Content="+ Додати" />
+            </Grid>
+
+            <Grid Grid.Row="1">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource Card}">
+                    <ListBox x:Name="PasswordList" BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="5"
+                                    Padding="8"
+                                    Background="#F1F2F6"
+                                    CornerRadius="8">
+                                    <StackPanel>
+                                        <TextBlock FontWeight="Bold" Text="{Binding Title}" />
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="Gray"
+                                            Text="{Binding Login}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource Card}">
+                    <StackPanel>
+
+                        <TextBlock
+                            Margin="5"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Text="Дані запису" />
+
+                        <TextBox x:Name="TitleBox" />
+                        <TextBox x:Name="LoginBox" />
+                        <PasswordBox x:Name="PasswordBox" Margin="5" />
+
+                        <ComboBox x:Name="CategoryBox" Margin="5">
+                            <ComboBoxItem Content="Соцмережі" />
+                            <ComboBoxItem Content="Пошта" />
+                            <ComboBoxItem Content="Робота" />
+                        </ComboBox>
+
+                        <TextBox
+                            x:Name="DescriptionBox"
+                            Height="60"
+                            AcceptsReturn="True"
+                            TextWrapping="Wrap" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="100"
+                                Click="Save_Click"
+                                Content="Зберегти" />
+
+                            <Button
+                                Width="100"
+                                Background="#FF4757"
+                                Click="Delete_Click"
+                                Content="Видалити" />
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+
+        </Grid>
+
+        <Border
+            Height="150"
+            Margin="210,0,10,10"
+            VerticalAlignment="Bottom"
+            Style="{StaticResource Card}">
+
+            <StackPanel>
+
+                <TextBlock FontWeight="Bold" Text="Генератор паролів" />
+
+                <Slider
+                    x:Name="LengthSlider"
+                    Maximum="32"
+                    Minimum="6"
+                    Value="12" />
+
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox
+                        x:Name="UpperCheck"
+                        Content="A-Z"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="LowerCheck"
+                        Content="a-z"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="DigitCheck"
+                        Content="0-9"
+                        IsChecked="True" />
+                    <CheckBox
+                        x:Name="SymbolCheck"
+                        Content="!@#"
+                        IsChecked="True" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Click="Generate_Click" Content="Згенерувати" />
+
+                    <Button Click="Copy_Click" Content="Копіювати" />
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
 
     </Grid>
 </Window>
