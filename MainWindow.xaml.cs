@@ -1,5 +1,5 @@
-﻿using projectapp.models;
-using projectapp.Services;
+﻿using passwordmanager.models;
+using passwordmanager.Services;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace projectapp
+namespace passwordmanager
 {
     public partial class MainWindow : Window
     {
@@ -150,8 +150,12 @@ namespace projectapp
 
         private void ShowGenerator_Click(object sender, RoutedEventArgs e)
         {
-            MainPanel.Visibility = Visibility.Collapsed;
-            GeneratorPanel.Visibility = Visibility.Visible;
+            GeneratorWindow win = new GeneratorWindow();
+
+            if (win.ShowDialog() == true)
+            {
+                PasswordBox.Password = win.GeneratedPassword;
+            }
         }
         private void PasswordList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -195,9 +199,13 @@ namespace projectapp
         }
         private void ShowCategories_Click(object sender, RoutedEventArgs e)
         {
-            MainPanel.Visibility = Visibility.Collapsed;
-            GeneratorPanel.Visibility = Visibility.Collapsed;
-            CategoriesPanel.Visibility = Visibility.Visible;
+            CategoriesWindow win = new CategoriesWindow(items);
+
+            if (win.ShowDialog() == true)
+            {
+                PasswordList.SelectedItem = win.SelectedItem;
+                PasswordList.ScrollIntoView(win.SelectedItem);
+            }
         }
 
         private void ShowMain_Click(object sender, RoutedEventArgs e)
@@ -213,9 +221,12 @@ namespace projectapp
 
             CategoryTitle.Text = category;
 
-            CategoryList.ItemsSource = items
-                .Where(x => x.Category == category)
+            var filtered = items
+                .Where(x => x.Category != null &&
+                            x.Category.Trim() == category.Trim())
                 .ToList();
+
+            CategoryList.ItemsSource = filtered;
         }
         private void CategoryList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -254,33 +265,6 @@ namespace projectapp
         }
         private void ApplySettings_Click(object sender, RoutedEventArgs e)
         {
-            string theme = (ThemeBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-
-            if (theme == "Темна")
-            {
-                this.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E1E2E"));
-            }
-            else
-            {
-                this.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F6FA"));
-            }
-
-            ApplyLanguage();
-        }
-        private void ApplyLanguage()
-        {
-            string lang = (LanguageBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-
-            var dict = new ResourceDictionary();
-
-            if (lang == "English")
-                dict.Source = new Uri("Resources/Strings.en.xaml", UriKind.Relative);
-            else
-                dict.Source = new Uri("Resources/Strings.uk.xaml", UriKind.Relative);
-
-            Application.Current.Resources.MergedDictionaries.Clear();
-            Application.Current.Resources.MergedDictionaries.Add(dict);
-
             ApplyTheme();
         }
         private void ApplyTheme()
@@ -294,6 +278,7 @@ namespace projectapp
             else
                 dict.Source = new Uri("Resources/LightTheme.xaml", UriKind.Relative);
 
+            Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(dict);
         }
     }

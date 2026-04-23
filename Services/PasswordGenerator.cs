@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace projectapp.Services
+namespace passwordmanager.Services
 {
     public class PasswordGenerator
     {

@@ -1,11 +1,11 @@
 ﻿<Window
-    x:Class="projectapp.MainWindow"
+    x:Class="passwordmanager.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Password Manager"
     Width="1000"
     Height="600"
-    Background="#F5F6FA"
+    Background="{DynamicResource BgBrush}"
     WindowStartupLocation="CenterScreen">
     <Window.Resources>
 
@@ -55,20 +55,20 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Background="#2F3542">
+            <StackPanel Background="{DynamicResource SidebarBrush}">
 
-            <TextBlock
+                <TextBlock
                 Margin="10"
                 FontSize="16"
                 Foreground="White"
                 Text="Password Manager" />
 
-             <Button Click="ShowMain_Click" x:Name="BtnAll" Content="{DynamicResource AllEntries}"/>
+             <Button Click="ShowMain_Click" x:Name="BtnAll" Content="Усі записи"/>
             <Button Content="Категорії" Click="ShowCategories_Click"/>
             <Button Click="ShowGenerator_Click" Content="Генератор" />
             <Button Content="Налаштування" x:Name="BtnSettings" Click="ShowSettings_Click"/>
 
-        </StackPanel>
+            </StackPanel>
 
         <Grid Grid.Column="1">
 
@@ -101,7 +101,7 @@
                                  SelectionChanged="PasswordList_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#F1F2F6"
+                                    <Border Background="{DynamicResource CardBrush}"
                                     Margin="5"
                                     Padding="8"
                                     CornerRadius="8">
@@ -128,7 +128,7 @@
                             <TextBlock Text="Назва"/>
                             <TextBox x:Name="TitleBox"/>
 
-                            <TextBlock Text="{DynamicResource Login}"/>
+                            <TextBlock Text="Логін"/>
                             <TextBox x:Name="LoginBox"/>
 
                             <TextBlock Text="Пароль"/>
@@ -163,6 +163,7 @@
                             <Button
                                 Width="100"
                                 Click="Save_Click"
+                                Background="{DynamicResource AccentBrush}"
                                 Content="Зберегти" />
 
                             <Button
@@ -293,12 +294,6 @@
                        FontSize="18"
                        FontWeight="Bold"
                        Margin="5"/>
-
-                    <TextBlock Text="Мова"/>
-                    <ComboBox x:Name="LanguageBox" Margin="5">
-                        <ComboBoxItem Content="Українська"/>
-                        <ComboBoxItem Content="English"/>
-                    </ComboBox>
 
                     <TextBlock Text="Тема"/>
                     <ComboBox x:Name="ThemeBox" Margin="5">
