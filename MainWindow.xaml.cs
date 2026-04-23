@@ -1,5 +1,6 @@
 ﻿using projectapp.models;
 using projectapp.Services;
+using System.Text.RegularExpressions;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,12 @@ using System.Windows.Shapes;
 
 namespace projectapp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         DataService dataService = new DataService();
         List<PasswordItem> items;
+        PasswordItem selectedItem = null;
+
 
         public MainWindow()
         {
@@ -33,20 +33,54 @@ namespace projectapp
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            var item = new PasswordItem
+            if (string.IsNullOrWhiteSpace(LoginBox.Text) ||
+                string.IsNullOrWhiteSpace(PasswordBox.Password))
             {
-                Title = TitleBox.Text,
-                Login = LoginBox.Text,
-                Password = PasswordBox.Password,
-                Category = (CategoryBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content.ToString(),
-                Description = DescriptionBox.Text
-            };
+                MessageBox.Show("Введіть логін і пароль!");
+                return;
+            }
 
-            items.Add(item);
+            if (!IsValidEmail(LoginBox.Text))
+            {
+                MessageBox.Show("Логін має бути у форматі email!");
+                return;
+            }
+
+            string password = isPasswordVisible ? PasswordTextBox.Text : PasswordBox.Password;
+            string category = (CategoryBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+            if (selectedItem != null)
+            {
+                selectedItem.Title = TitleBox.Text;
+                selectedItem.Login = LoginBox.Text;
+                selectedItem.Password = password;
+                selectedItem.Category = category;
+                selectedItem.Description = DescriptionBox.Text;
+            }
+            else
+            {
+                var item = new PasswordItem
+                {
+                    Title = TitleBox.Text,
+                    Login = LoginBox.Text,
+                    Password = password,
+                    Category = category,
+                    Description = DescriptionBox.Text
+                };
+
+                items.Add(item);
+            }
+
             PasswordList.Items.Refresh();
             dataService.Save(items);
 
             ClearFields();
+            selectedItem = null;
+        }
+        private bool IsValidEmail(string email)
+        {
+            return Regex.IsMatch(email,
+                @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -61,38 +95,48 @@ namespace projectapp
             }
         }
 
-        private void PasswordList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (PasswordList.SelectedItem is PasswordItem selected)
-            {
-                TitleBox.Text = selected.Title;
-                LoginBox.Text = selected.Login;
-                PasswordBox.Password = selected.Password;
-                DescriptionBox.Text = selected.Description;
-            }
-        }
         private void SearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             string text = SearchBox.Text.ToLower();
 
-            PasswordList.ItemsSource = items
-                .Where(x => x.Title.ToLower().Contains(text))
-                .ToList();
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                PasswordList.ItemsSource = items;
+            }
+            else
+            {
+                PasswordList.ItemsSource = items
+                    .Where(x => x.Title.ToLower().Contains(text))
+                    .ToList();
+            }
         }
         private void Generate_Click(object sender, RoutedEventArgs e)
         {
             int length = (int)LengthSlider.Value;
 
-            bool upper = UpperCheck.IsChecked == true;
-            bool lower = LowerCheck.IsChecked == true;
-            bool digits = DigitCheck.IsChecked == true;
-            bool symbols = SymbolCheck.IsChecked == true;
+            string chars = "";
 
-            PasswordBox.Password = PasswordGenerator.Generate(length, upper, lower, digits, symbols);
+            if (UpperCheck.IsChecked == true) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (LowerCheck.IsChecked == true) chars += "abcdefghijklmnopqrstuvwxyz";
+            if (DigitCheck.IsChecked == true) chars += "0123456789";
+            if (SymbolCheck.IsChecked == true) chars += "!@#$%^&*()";
+
+            if (chars == "")
+            {
+                MessageBox.Show("Оберіть хоча б один тип символів!");
+                return;
+            }
+
+            Random rnd = new Random();
+
+            string password = new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[rnd.Next(s.Length)]).ToArray());
+
+            GeneratedPasswordBox.Text = password;
         }
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(PasswordBox.Password);
+            Clipboard.SetText(GeneratedPasswordBox.Text);
         }
 
         private void ClearFields()
@@ -102,6 +146,155 @@ namespace projectapp
             PasswordBox.Password = "";
             DescriptionBox.Text = "";
             CategoryBox.SelectedIndex = -1;
+        }
+
+        private void ShowGenerator_Click(object sender, RoutedEventArgs e)
+        {
+            MainPanel.Visibility = Visibility.Collapsed;
+            GeneratorPanel.Visibility = Visibility.Visible;
+        }
+        private void PasswordList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (PasswordList.SelectedItem is not PasswordItem selected)
+                return;
+
+            selectedItem = selected;
+
+            TitleBox.Text = selected.Title;
+            LoginBox.Text = selected.Login;
+            PasswordBox.Password = selected.Password;
+            DescriptionBox.Text = selected.Description;
+
+            foreach (ComboBoxItem item in CategoryBox.Items)
+            {
+                if (item.Content.ToString() == selected.Category)
+                {
+                    CategoryBox.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+        private bool isPasswordVisible = false;
+
+        private void TogglePassword_Click(object sender, RoutedEventArgs e)
+        {
+            if (isPasswordVisible)
+            {
+                PasswordBox.Password = PasswordTextBox.Text;
+                PasswordBox.Visibility = Visibility.Visible;
+                PasswordTextBox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                PasswordTextBox.Text = PasswordBox.Password;
+                PasswordBox.Visibility = Visibility.Collapsed;
+                PasswordTextBox.Visibility = Visibility.Visible;
+            }
+
+            isPasswordVisible = !isPasswordVisible;
+        }
+        private void ShowCategories_Click(object sender, RoutedEventArgs e)
+        {
+            MainPanel.Visibility = Visibility.Collapsed;
+            GeneratorPanel.Visibility = Visibility.Collapsed;
+            CategoriesPanel.Visibility = Visibility.Visible;
+        }
+
+        private void ShowMain_Click(object sender, RoutedEventArgs e)
+        {
+            MainPanel.Visibility = Visibility.Visible;
+            GeneratorPanel.Visibility = Visibility.Collapsed;
+            CategoriesPanel.Visibility = Visibility.Collapsed;
+            SettingsPanel.Visibility = Visibility.Collapsed;
+        }
+        private void Category_Click(object sender, RoutedEventArgs e)
+        {
+            string category = (sender as Button).Content.ToString();
+
+            CategoryTitle.Text = category;
+
+            CategoryList.ItemsSource = items
+                .Where(x => x.Category == category)
+                .ToList();
+        }
+        private void CategoryList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (CategoryList.SelectedItem is PasswordItem selected)
+            {
+                ShowMain_Click(null, null);
+
+                PasswordList.SelectedItem = selected;
+                PasswordList.ScrollIntoView(selected);
+
+                selectedItem = selected;
+
+                TitleBox.Text = selected.Title;
+                LoginBox.Text = selected.Login;
+                PasswordBox.Password = selected.Password;
+                DescriptionBox.Text = selected.Description;
+
+                foreach (ComboBoxItem item in CategoryBox.Items)
+                {
+                    if (item.Content.ToString() == selected.Category)
+                    {
+                        CategoryBox.SelectedItem = item;
+                        CategoryList.SelectedItem = null;
+                        break;
+                    }
+                }
+            }
+            PasswordList.ItemsSource = items;
+        }
+        private void ShowSettings_Click(object sender, RoutedEventArgs e)
+        {
+            MainPanel.Visibility = Visibility.Collapsed;
+            GeneratorPanel.Visibility = Visibility.Collapsed;
+            CategoriesPanel.Visibility = Visibility.Collapsed;
+            SettingsPanel.Visibility = Visibility.Visible;
+        }
+        private void ApplySettings_Click(object sender, RoutedEventArgs e)
+        {
+            string theme = (ThemeBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+            if (theme == "Темна")
+            {
+                this.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E1E2E"));
+            }
+            else
+            {
+                this.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F6FA"));
+            }
+
+            ApplyLanguage();
+        }
+        private void ApplyLanguage()
+        {
+            string lang = (LanguageBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+            var dict = new ResourceDictionary();
+
+            if (lang == "English")
+                dict.Source = new Uri("Resources/Strings.en.xaml", UriKind.Relative);
+            else
+                dict.Source = new Uri("Resources/Strings.uk.xaml", UriKind.Relative);
+
+            Application.Current.Resources.MergedDictionaries.Clear();
+            Application.Current.Resources.MergedDictionaries.Add(dict);
+
+            ApplyTheme();
+        }
+        private void ApplyTheme()
+        {
+            string theme = (ThemeBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+            var dict = new ResourceDictionary();
+
+            if (theme == "Темна")
+                dict.Source = new Uri("Resources/DarkTheme.xaml", UriKind.Relative);
+            else
+                dict.Source = new Uri("Resources/LightTheme.xaml", UriKind.Relative);
+
+            Application.Current.Resources.MergedDictionaries.Add(dict);
         }
     }
 }

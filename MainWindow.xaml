@@ -7,7 +7,6 @@
     Height="600"
     Background="#F5F6FA"
     WindowStartupLocation="CenterScreen">
-
     <Window.Resources>
 
         <Style TargetType="Button">
@@ -48,8 +47,8 @@
         </Style>
 
     </Window.Resources>
-
     <Grid>
+        <Grid x:Name="MainPanel">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
@@ -64,11 +63,10 @@
                 Foreground="White"
                 Text="Password Manager" />
 
-            <Button Content="Всі записи" />
-            <Button Content="Категорії" />
-            <Button Content="Пошук" />
-            <Button Content="Генератор" />
-            <Button Content="Налаштування" />
+             <Button Click="ShowMain_Click" x:Name="BtnAll" Content="{DynamicResource AllEntries}"/>
+            <Button Content="Категорії" Click="ShowCategories_Click"/>
+            <Button Click="ShowGenerator_Click" Content="Генератор" />
+            <Button Content="Налаштування" x:Name="BtnSettings" Click="ShowSettings_Click"/>
 
         </StackPanel>
 
@@ -79,8 +77,9 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Background="White">
-                <TextBox
+                <Grid Background="White">
+                    <TextBlock Text="Пошук"/>
+                    <TextBox
                     x:Name="SearchBox"
                     Width="250"
                     Height="30"
@@ -88,14 +87,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     TextChanged="SearchBox_TextChanged" />
-
-                <Button
-                    Width="120"
-                    Height="30"
-                    Margin="10"
-                    HorizontalAlignment="Right"
-                    Content="+ Додати" />
-            </Grid>
+                </Grid>
 
             <Grid Grid.Row="1">
 
@@ -105,26 +97,24 @@
                 </Grid.ColumnDefinitions>
 
                 <Border Style="{StaticResource Card}">
-                    <ListBox x:Name="PasswordList" BorderThickness="0">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border
+                        <ListBox x:Name="PasswordList" BorderThickness="0"
+                                 SelectionChanged="PasswordList_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F1F2F6"
                                     Margin="5"
                                     Padding="8"
-                                    Background="#F1F2F6"
                                     CornerRadius="8">
-                                    <StackPanel>
-                                        <TextBlock FontWeight="Bold" Text="{Binding Title}" />
-                                        <TextBlock
-                                            FontSize="12"
-                                            Foreground="Gray"
-                                            Text="{Binding Login}" />
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Border>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Login}" FontSize="12" Foreground="Gray"/>
+                                            <TextBlock Text="{Binding Category}" FontSize="11" Foreground="#6C63FF"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
 
                 <Border Grid.Column="1" Style="{StaticResource Card}">
                     <StackPanel>
@@ -135,23 +125,41 @@
                             FontWeight="Bold"
                             Text="Дані запису" />
 
-                        <TextBox x:Name="TitleBox" />
-                        <TextBox x:Name="LoginBox" />
-                        <PasswordBox x:Name="PasswordBox" Margin="5" />
+                            <TextBlock Text="Назва"/>
+                            <TextBox x:Name="TitleBox"/>
 
-                        <ComboBox x:Name="CategoryBox" Margin="5">
-                            <ComboBoxItem Content="Соцмережі" />
-                            <ComboBoxItem Content="Пошта" />
-                            <ComboBoxItem Content="Робота" />
-                        </ComboBox>
+                            <TextBlock Text="{DynamicResource Login}"/>
+                            <TextBox x:Name="LoginBox"/>
 
-                        <TextBox
-                            x:Name="DescriptionBox"
-                            Height="60"
-                            AcceptsReturn="True"
-                            TextWrapping="Wrap" />
+                            <TextBlock Text="Пароль"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
 
-                        <StackPanel Orientation="Horizontal">
+                                <PasswordBox x:Name="PasswordBox"/>
+                                <TextBox x:Name="PasswordTextBox" Visibility="Collapsed"/>
+
+                                <Button Grid.Column="1"
+                                 Content="👁"
+                                 Click="TogglePassword_Click"/>
+                            </Grid>
+
+                            <TextBlock Text="Категорія"/>
+                            <ComboBox x:Name="CategoryBox" Margin="5">
+                                <ComboBoxItem Content="Соцмережі"/>
+                                <ComboBoxItem Content="Пошта"/>
+                                <ComboBoxItem Content="Робота"/>
+                            </ComboBox>
+
+                            <TextBlock Text="Опис"/>
+                            <TextBox x:Name="DescriptionBox"
+                             Height="60"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"/>
+
+                            <StackPanel Orientation="Horizontal">
                             <Button
                                 Width="100"
                                 Click="Save_Click"
@@ -171,49 +179,142 @@
 
         </Grid>
 
-        <Border
-            Height="150"
-            Margin="210,0,10,10"
-            VerticalAlignment="Bottom"
-            Style="{StaticResource Card}">
-
-            <StackPanel>
-
-                <TextBlock FontWeight="Bold" Text="Генератор паролів" />
-
-                <Slider
-                    x:Name="LengthSlider"
-                    Maximum="32"
-                    Minimum="6"
-                    Value="12" />
-
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox
-                        x:Name="UpperCheck"
-                        Content="A-Z"
-                        IsChecked="True" />
-                    <CheckBox
-                        x:Name="LowerCheck"
-                        Content="a-z"
-                        IsChecked="True" />
-                    <CheckBox
-                        x:Name="DigitCheck"
-                        Content="0-9"
-                        IsChecked="True" />
-                    <CheckBox
-                        x:Name="SymbolCheck"
-                        Content="!@#"
-                        IsChecked="True" />
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <Button Click="Generate_Click" Content="Згенерувати" />
-
-                    <Button Click="Copy_Click" Content="Копіювати" />
-                </StackPanel>
-
-            </StackPanel>
-        </Border>
-
     </Grid>
+        <Grid x:Name="GeneratorPanel" Visibility="Collapsed">
+
+            <Border Style="{StaticResource Card}"
+            Width="400"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+
+                <StackPanel>
+
+                    <TextBlock Text="Генератор паролів"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Margin="5"/>
+
+                    <TextBlock Text="Довжина:"/>
+                    <Slider x:Name="LengthSlider" Minimum="6" Maximum="32" Value="12"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox x:Name="UpperCheck" Content="A-Z" IsChecked="True"/>
+                        <CheckBox x:Name="LowerCheck" Content="a-z" IsChecked="True"/>
+                        <CheckBox x:Name="DigitCheck" Content="0-9" IsChecked="True"/>
+                        <CheckBox x:Name="SymbolCheck" Content="@#!$" IsChecked="True"/>
+                    </StackPanel>
+
+                    <TextBox x:Name="GeneratedPasswordBox"
+                     Height="35"
+                     Margin="0,10"
+                     FontSize="16"
+                     HorizontalContentAlignment="Center"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Згенерувати" Click="Generate_Click"/>
+                        <Button Content="Копіювати" Click="Copy_Click"/>
+                    </StackPanel>
+
+                    <Button Content="Назад"
+                    Background="#57606f"
+                    Click="ShowMain_Click"/>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid x:Name="CategoriesPanel" Visibility="Collapsed">
+
+            <Border Style="{StaticResource Card}"
+            Width="500"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Background="#F1F2F6" Margin="5">
+
+                        <TextBlock Text="Категорії"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Margin="5"/>
+
+                        <Button Content="Соцмережі" Click="Category_Click"/>
+                        <Button Content="Пошта" Click="Category_Click"/>
+                        <Button Content="Робота" Click="Category_Click"/>
+
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Margin="10">
+
+                        <TextBlock x:Name="CategoryTitle"
+                           Text="Оберіть категорію"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Margin="5"/>
+
+                        <ListBox x:Name="CategoryList" BorderThickness="0"
+                                  SelectionChanged="CategoryList_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F1F2F6"
+                                     Margin="5"
+                                     Padding="8"
+                                     CornerRadius="8">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Login}" FontSize="12" Foreground="Gray"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <Button Content="Назад"
+                        Background="#57606f"
+                        Click="ShowMain_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        <Grid x:Name="SettingsPanel" Visibility="Collapsed">
+
+            <Border Style="{StaticResource Card}"
+            Width="400"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+
+                <StackPanel>
+
+                    <TextBlock Text="Налаштування"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Margin="5"/>
+
+                    <TextBlock Text="Мова"/>
+                    <ComboBox x:Name="LanguageBox" Margin="5">
+                        <ComboBoxItem Content="Українська"/>
+                        <ComboBoxItem Content="English"/>
+                    </ComboBox>
+
+                    <TextBlock Text="Тема"/>
+                    <ComboBox x:Name="ThemeBox" Margin="5">
+                        <ComboBoxItem Content="Світла"/>
+                        <ComboBoxItem Content="Темна"/>
+                    </ComboBox>
+
+                    <Button Content="Застосувати"
+                    Click="ApplySettings_Click"/>
+
+                    <Button Content="⬅ Назад"
+                    Background="#57606f"
+                    Click="ShowMain_Click"/>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>     
 </Window>
