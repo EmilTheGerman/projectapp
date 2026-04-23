@@ -22,22 +22,25 @@
             <TextBlock Text="Довжина"
                        Foreground="{DynamicResource TextBrush}"/>
 
-            <Slider x:Name="LengthSlider" Minimum="6" Maximum="32" Value="12"/>
+            <Slider x:Name="LengthSlider" Minimum="6" Maximum="32" Value="12" />
 
             <StackPanel Orientation="Horizontal">
-                <CheckBox x:Name="UpperCheck" Content="A-Z"/>
-                <CheckBox x:Name="LowerCheck" Content="a-z"/>
-                <CheckBox x:Name="DigitCheck" Content="0-9"/>
-                <CheckBox x:Name="SymbolCheck" Content="@#!$"/>
+                <CheckBox x:Name="UpperCheck" Content="A-Z" Foreground="{DynamicResource TextBrush}"/>
+                <CheckBox x:Name="LowerCheck" Content="a-z" Foreground="{DynamicResource TextBrush}"/>
+                <CheckBox x:Name="DigitCheck" Content="0-9" Foreground="{DynamicResource TextBrush}"/>
+                <CheckBox x:Name="SymbolCheck" Content="@#!$" Foreground="{DynamicResource TextBrush}"/>
             </StackPanel>
 
-            <TextBox x:Name="ResultBox" Margin="0,10"/>
+            <TextBox x:Name="ResultBox" Margin="0,10" Foreground="{DynamicResource TextBrush}"
+            Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BgBrush}"/>
 
             <StackPanel Orientation="Horizontal">
-                <Button Content="Згенерувати"
+                <Button Width="100"
+                        Content="Згенерувати"
                         Background="{DynamicResource AccentBrush}"
                         Click="Generate_Click"/>
-                <Button Content="Використати"
+                <Button Width="100"
+                        Content="Використати"
                         Click="Use_Click"/>
             </StackPanel>
 

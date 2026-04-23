@@ -3,11 +3,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-
     <SolidColorBrush x:Key="BgBrush" Color="#1E1E2E" />
     <SolidColorBrush x:Key="CardBrush" Color="#2F3542" />
     <SolidColorBrush x:Key="TextBrush" Color="White" />
+    <SolidColorBrush x:Key="SubTextBrush" Color="White" />
     <SolidColorBrush x:Key="SidebarBrush" Color="#1A1A26" />
     <SolidColorBrush x:Key="AccentBrush" Color="#6C63FF" />
-
 </ResourceDictionary>

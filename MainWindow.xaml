@@ -5,7 +5,7 @@
     Title="Password Manager"
     Width="1000"
     Height="600"
-    Background="{DynamicResource BgBrush}"
+    Background="{DynamicResource CardBrush}"
     WindowStartupLocation="CenterScreen">
     <Window.Resources>
 
@@ -30,12 +30,12 @@
         <Style TargetType="TextBox">
             <Setter Property="Margin" Value="5" />
             <Setter Property="Padding" Value="6" />
-            <Setter Property="BorderBrush" Value="#DCDDE1" />
+            <Setter Property="BorderBrush" Value="#1E1E2E" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <Style x:Key="Card" TargetType="Border">
-            <Setter Property="Background" Value="White" />
+            <Setter Property="Background" Value="{DynamicResource CardBrush}" />
             <Setter Property="CornerRadius" Value="10" />
             <Setter Property="Padding" Value="10" />
             <Setter Property="Margin" Value="10" />
@@ -55,15 +55,15 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-            <StackPanel Background="{DynamicResource SidebarBrush}">
+            <StackPanel Background="{DynamicResource CardBrush}">
 
                 <TextBlock
                 Margin="10"
                 FontSize="16"
-                Foreground="White"
+                Foreground="{DynamicResource TextBrush}"
                 Text="Password Manager" />
 
-             <Button Click="ShowMain_Click" x:Name="BtnAll" Content="Усі записи"/>
+            <Button Click="ShowMain_Click" x:Name="BtnAll" Content="Усі записи"/>
             <Button Content="Категорії" Click="ShowCategories_Click"/>
             <Button Click="ShowGenerator_Click" Content="Генератор" />
             <Button Content="Налаштування" x:Name="BtnSettings" Click="ShowSettings_Click"/>
@@ -77,16 +77,18 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-                <Grid Background="White">
-                    <TextBlock Text="Пошук"/>
+                <Grid Background="{DynamicResource CardBrush}">
+                    <TextBlock Text="Пошук" Foreground="{DynamicResource TextBrush}"/>
                     <TextBox
                     x:Name="SearchBox"
                     Width="250"
                     Height="30"
-                    Margin="10"
+                    Margin="5"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    TextChanged="SearchBox_TextChanged" />
+                    TextChanged="SearchBox_TextChanged" 
+                    Foreground="{DynamicResource TextBrush}"
+                    Background="{DynamicResource CardBrush}"/>
                 </Grid>
 
             <Grid Grid.Row="1">
@@ -96,19 +98,20 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Border Style="{StaticResource Card}">
+                    <Border Style="{StaticResource Card}" Background="{DynamicResource BgBrush}">
                         <ListBox x:Name="PasswordList" BorderThickness="0"
-                                 SelectionChanged="PasswordList_SelectionChanged">
+                                 SelectionChanged="PasswordList_SelectionChanged"
+                                 Background="{DynamicResource CardBrush}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{DynamicResource CardBrush}"
+                                    <Border Background="{DynamicResource BgBrush}"
                                     Margin="5"
                                     Padding="8"
                                     CornerRadius="8">
                                         <StackPanel>
-                                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding Login}" FontSize="12" Foreground="Gray"/>
-                                            <TextBlock Text="{Binding Category}" FontSize="11" Foreground="#6C63FF"/>
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"/>
+                                            <TextBlock Text="{Binding Login}" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
+                                            <TextBlock Text="{Binding Category}" FontSize="11" Foreground="{DynamicResource TextBrush}"/>
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
@@ -116,48 +119,56 @@
                         </ListBox>
                     </Border>
 
-                <Border Grid.Column="1" Style="{StaticResource Card}">
+                    <Border Grid.Column="1" Style="{StaticResource Card}">
                     <StackPanel>
 
                         <TextBlock
                             Margin="5"
                             FontSize="16"
                             FontWeight="Bold"
-                            Text="Дані запису" />
+                            Text="Дані запису"
+                            Foreground="{DynamicResource TextBrush}"/>
 
-                            <TextBlock Text="Назва"/>
-                            <TextBox x:Name="TitleBox"/>
+                            <TextBlock Text="Назва" Foreground="{DynamicResource TextBrush}"/>
+                            <TextBox x:Name="TitleBox" Foreground="{DynamicResource TextBrush}"
+                            Background="{DynamicResource CardBrush}"/>
 
-                            <TextBlock Text="Логін"/>
-                            <TextBox x:Name="LoginBox"/>
+                            <TextBlock Text="Логін" Foreground="{DynamicResource TextBrush}"/>
+                            <TextBox x:Name="LoginBox" Foreground="{DynamicResource TextBrush}"
+                            Background="{DynamicResource CardBrush}"/>
 
-                            <TextBlock Text="Пароль"/>
+                            <TextBlock Text="Пароль" Foreground="{DynamicResource TextBrush}"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="40"/>
                                 </Grid.ColumnDefinitions>
 
-                                <PasswordBox x:Name="PasswordBox"/>
-                                <TextBox x:Name="PasswordTextBox" Visibility="Collapsed"/>
+                                <PasswordBox x:Name="PasswordBox" Foreground="{DynamicResource TextBrush}"
+                                Background="{DynamicResource CardBrush}"/>
+                                <TextBox x:Name="PasswordTextBox" Visibility="Collapsed"
+                                Foreground="{DynamicResource TextBrush}"
+                                Background="{DynamicResource CardBrush}"/>
 
                                 <Button Grid.Column="1"
                                  Content="👁"
                                  Click="TogglePassword_Click"/>
                             </Grid>
 
-                            <TextBlock Text="Категорія"/>
+                            <TextBlock Text="Категорія" Foreground="{DynamicResource TextBrush}"/>
                             <ComboBox x:Name="CategoryBox" Margin="5">
-                                <ComboBoxItem Content="Соцмережі"/>
-                                <ComboBoxItem Content="Пошта"/>
-                                <ComboBoxItem Content="Робота"/>
+                                <ComboBoxItem Content="Соцмережі" Foreground="{DynamicResource SubTextBrush}"/>
+                                <ComboBoxItem Content="Пошта" Foreground="{DynamicResource SubTextBrush}"/>
+                                <ComboBoxItem Content="Робота" Foreground="{DynamicResource SubTextBrush}"/>
                             </ComboBox>
 
-                            <TextBlock Text="Опис"/>
+                            <TextBlock Text="Опис" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox x:Name="DescriptionBox"
                              Height="60"
                              AcceptsReturn="True"
-                             TextWrapping="Wrap"/>
+                             TextWrapping="Wrap"
+                             Foreground="{DynamicResource TextBrush}"
+                             Background="{DynamicResource CardBrush}"/>
 
                             <StackPanel Orientation="Horizontal">
                             <Button
@@ -236,7 +247,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Background="#F1F2F6" Margin="5">
+                    <StackPanel Background="{DynamicResource CardBrush}" Margin="5">
 
                         <TextBlock Text="Категорії"
                            FontSize="16"
@@ -261,7 +272,7 @@
                                   SelectionChanged="CategoryList_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#F1F2F6"
+                                    <Border Background="{DynamicResource CardBrush}"
                                      Margin="5"
                                      Padding="8"
                                      CornerRadius="8">
@@ -286,16 +297,18 @@
             <Border Style="{StaticResource Card}"
             Width="400"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+            VerticalAlignment="Center"
+            Background="{DynamicResource BgBrush}">
 
                 <StackPanel>
 
                     <TextBlock Text="Налаштування"
                        FontSize="18"
                        FontWeight="Bold"
-                       Margin="5"/>
+                       Margin="5"
+                       Foreground="{DynamicResource TextBrush}"/>
 
-                    <TextBlock Text="Тема"/>
+                    <TextBlock Text="Тема" Foreground="{DynamicResource TextBrush}"/>
                     <ComboBox x:Name="ThemeBox" Margin="5">
                         <ComboBoxItem Content="Світла"/>
                         <ComboBoxItem Content="Темна"/>
@@ -304,7 +317,7 @@
                     <Button Content="Застосувати"
                     Click="ApplySettings_Click"/>
 
-                    <Button Content="⬅ Назад"
+                    <Button Content="Назад"
                     Background="#57606f"
                     Click="ShowMain_Click"/>
 
