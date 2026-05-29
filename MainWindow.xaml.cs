@@ -49,33 +49,41 @@ namespace passwordmanager
             string password = isPasswordVisible ? PasswordTextBox.Text : PasswordBox.Password;
             string category = (CategoryBox.SelectedItem as ComboBoxItem)?.Content.ToString();
 
-            if (selectedItem != null)
+            if (currentItem == null)
             {
-                selectedItem.Title = TitleBox.Text;
-                selectedItem.Login = LoginBox.Text;
-                selectedItem.Password = password;
-                selectedItem.Category = category;
-                selectedItem.Description = DescriptionBox.Text;
+                currentItem = new PasswordItem();
+                items.Add(currentItem);
+            }
+
+            currentItem.Title = TitleBox.Text;
+            currentItem.Login = LoginBox.Text;
+
+            if (isPasswordVisible)
+            {
+                PasswordBox.Password = PasswordTextBox.Text;
             }
             else
             {
-                var item = new PasswordItem
-                {
-                    Title = TitleBox.Text,
-                    Login = LoginBox.Text,
-                    Password = password,
-                    Category = category,
-                    Description = DescriptionBox.Text
-                };
-
-                items.Add(item);
+                PasswordTextBox.Text = PasswordBox.Password;
             }
+
+            currentItem.Password = isPasswordVisible
+                ? PasswordTextBox.Text
+                : PasswordBox.Password;
+
+            currentItem.Category =
+                (CategoryBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+            currentItem.Description = DescriptionBox.Text;
 
             PasswordList.Items.Refresh();
             dataService.Save(items);
 
+            DetailsPanel.Visibility = Visibility.Collapsed;
+
             ClearFields();
-            selectedItem = null;
+            PasswordBox.Password = "";
+            PasswordTextBox.Text = "";
         }
         private bool IsValidEmail(string email)
         {
@@ -93,10 +101,15 @@ namespace passwordmanager
 
                 ClearFields();
             }
+            DetailsPanel.Visibility = Visibility.Collapsed;
         }
 
         private void SearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            SearchPlaceholder.Visibility =
+            string.IsNullOrWhiteSpace(SearchBox.Text)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
             string text = SearchBox.Text.ToLower();
 
             if (string.IsNullOrWhiteSpace(text))
@@ -167,6 +180,7 @@ namespace passwordmanager
             TitleBox.Text = selected.Title;
             LoginBox.Text = selected.Login;
             PasswordBox.Password = selected.Password;
+            PasswordTextBox.Text = selected.Password;
             DescriptionBox.Text = selected.Description;
 
             foreach (ComboBoxItem item in CategoryBox.Items)
@@ -177,20 +191,40 @@ namespace passwordmanager
                     break;
                 }
             }
+            DetailsPanel.Visibility = Visibility.Visible;
+            currentItem = selected;
         }
         private bool isPasswordVisible = false;
 
+        private void NewRecord_Click(object sender, RoutedEventArgs e)
+        {
+            currentItem = null;
+
+            ClearFields();
+
+            isPasswordVisible = false;
+
+            PasswordBox.Visibility = Visibility.Visible;
+            PasswordTextBox.Visibility = Visibility.Collapsed;
+            DetailsPanel.Visibility = Visibility.Visible;
+        }
+        private void CloseDetails_Click(object sender, RoutedEventArgs e)
+        {
+            DetailsPanel.Visibility = Visibility.Collapsed;
+        }
         private void TogglePassword_Click(object sender, RoutedEventArgs e)
         {
             if (isPasswordVisible)
             {
                 PasswordBox.Password = PasswordTextBox.Text;
+
                 PasswordBox.Visibility = Visibility.Visible;
                 PasswordTextBox.Visibility = Visibility.Collapsed;
             }
             else
             {
                 PasswordTextBox.Text = PasswordBox.Password;
+
                 PasswordBox.Visibility = Visibility.Collapsed;
                 PasswordTextBox.Visibility = Visibility.Visible;
             }
@@ -281,5 +315,6 @@ namespace passwordmanager
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(dict);
         }
+        private PasswordItem currentItem;
     }
 }

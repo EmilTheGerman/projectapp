@@ -7,6 +7,37 @@
         Background="{DynamicResource BgBrush}"
         WindowStartupLocation="CenterOwner">
     
+    <Window.Resources>
+
+        <Style x:Key="CategoryButtonStyle" TargetType="Button">
+
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+
+                        <Border Background="{TemplateBinding Background}"
+                            CornerRadius="10">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+
+                        </Border>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+    </Window.Resources>
 
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
@@ -15,9 +46,15 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Background="{DynamicResource BgBrush}">
-            <Button Content="Соцмережі" Click="Category_Click"/>
-            <Button Content="Пошта" Click="Category_Click"/>
-            <Button Content="Робота" Click="Category_Click"/>
+            <Button Content="Соцмережі" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
+            <Button Content="Пошта" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
+            <Button Content="Робота" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
+            <Button Content="Банкінг" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
+            <Button Content="Ігри" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
+            <Button Content="Навчання" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
+            <Button Content="Покупки" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
+            <Button Content="Хмарні сервіси" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
+            <Button Content="Інше" Click="Category_Click" Style="{StaticResource CategoryButtonStyle}"/>
         </StackPanel>
 
         <Border Grid.Column="1"
