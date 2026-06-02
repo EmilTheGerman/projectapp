@@ -36,10 +36,13 @@ namespace passwordmanager
 
             ResultBox.Text = GeneratedPassword;
         }
-
         private void Use_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
+        }
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

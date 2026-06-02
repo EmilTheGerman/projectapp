@@ -6,12 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace passwordmanager.Services
 {
     public class DataService
     {
-        private string path = "Data/data.json";
+        private string path = Path.Combine(
+     AppDomain.CurrentDomain.BaseDirectory,
+     "Data",
+     "data.json");
 
         public List<PasswordItem> Load()
         {
@@ -19,12 +23,18 @@ namespace passwordmanager.Services
                 return new List<PasswordItem>();
 
             string json = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<List<PasswordItem>>(json);
+
+            if (string.IsNullOrWhiteSpace(json))
+                return new List<PasswordItem>();
+
+            return JsonSerializer.Deserialize<List<PasswordItem>>(json)
+                   ?? new List<PasswordItem>();
         }
 
         public void Save(List<PasswordItem> items)
         {
-            Directory.CreateDirectory("Data");
+            Directory.CreateDirectory(
+    Path.GetDirectoryName(path));
             string json = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(path, json);
         }

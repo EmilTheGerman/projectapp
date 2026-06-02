@@ -1,0 +1,78 @@
+<Window
+    x:Class="passwordmanager.RegisterWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Width="450"
+    Height="400"
+    WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Margin" Value="0,5,0,10" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Background" Value="{DynamicResource CardBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Margin" Value="0,5,0,10" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Background" Value="{DynamicResource CardBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{DynamicResource BgBrush}">
+
+        <Border
+            Width="350"
+            Padding="25"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="{DynamicResource CardBrush}"
+            BorderBrush="{DynamicResource AccentBrush}"
+            BorderThickness="2"
+            CornerRadius="15">
+
+            <StackPanel>
+
+                <TextBlock
+                    Margin="0,0,0,20"
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource TextBrush}"
+                    Text="Реєстрація" />
+
+                <TextBlock Foreground="{DynamicResource TextBrush}" Text="Електронна пошта" />
+
+                <TextBox x:Name="LoginBox" />
+
+                <TextBlock Foreground="{DynamicResource TextBrush}" Text="Пароль" />
+
+                <PasswordBox x:Name="PasswordBox" />
+
+                <Button
+                    Height="40"
+                    Margin="0,15,0,0"
+                    Background="{DynamicResource AccentBrush}"
+                    Click="Create_Click"
+                    Content="Створити акаунт" />
+                
+                <Button Content="Назад до входу"
+        Height="40"
+        Margin="0,10,0,0"
+        Click="BackToLogin_Click"/>
+
+            </StackPanel>
+
+        </Border>
+
+    </Grid>
+</Window>

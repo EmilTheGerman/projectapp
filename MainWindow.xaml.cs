@@ -27,7 +27,16 @@ namespace passwordmanager
         {
             InitializeComponent();
 
-            items = dataService.Load();
+            if (Session.CurrentUser == "admin")
+            {
+                items = dataService.Load();
+            }
+            else
+            {
+                items = dataService.Load()
+                    .Where(x => x.Owner == Session.CurrentUser)
+                    .ToList();
+            }
             PasswordList.ItemsSource = items;
         }
 
@@ -55,6 +64,7 @@ namespace passwordmanager
                 items.Add(currentItem);
             }
 
+            currentItem.Owner = Session.CurrentUser;
             currentItem.Title = TitleBox.Text;
             currentItem.Login = LoginBox.Text;
 
@@ -76,8 +86,25 @@ namespace passwordmanager
 
             currentItem.Description = DescriptionBox.Text;
 
+            var allItems = dataService.Load();
+
+            if (!allItems.Contains(currentItem))
+            {
+                allItems.Add(currentItem);
+            }
+            else
+            {
+                int index = allItems.FindIndex(x =>
+                    x.Title == currentItem.Title &&
+                    x.Owner == currentItem.Owner);
+
+                if (index >= 0)
+                    allItems[index] = currentItem;
+            }
+
+            dataService.Save(allItems);
+
             PasswordList.Items.Refresh();
-            dataService.Save(items);
 
             DetailsPanel.Visibility = Visibility.Collapsed;
 
@@ -100,7 +127,7 @@ namespace passwordmanager
                 dataService.Save(items);
 
                 ClearFields();
-            }
+            } 
             DetailsPanel.Visibility = Visibility.Collapsed;
         }
 
@@ -314,6 +341,15 @@ namespace passwordmanager
 
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(dict);
+        }
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            Session.CurrentUser = null;
+
+            LoginWindow login = new LoginWindow();
+            login.Show();
+
+            Close();
         }
         private PasswordItem currentItem;
     }

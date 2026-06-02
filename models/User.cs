@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace passwordmanager.models
 {
-    public class PasswordItem
+    public class User
     {
-        public string Title { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
-        public string Category { get; set; }
-        public string Description { get; set; }
-        public string Owner { get; set; }
+        public string Role { get; set; }
     }
-
 }
