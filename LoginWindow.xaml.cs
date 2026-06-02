@@ -29,6 +29,7 @@ namespace passwordmanager
             if (login == "admin" &&
                 password == "admin123")
             {
+                Session.CurrentUser = "admin";
                 MainWindow window = new MainWindow();
                 window.Show();
 
@@ -37,14 +38,14 @@ namespace passwordmanager
             }
 
             var users = userService.Load();
+            string hashedPassword = PasswordHelper.HashPassword(password);
 
             var user = users.FirstOrDefault(x =>
                 x.Login == login &&
-                x.Password == password);
+                x.Password == hashedPassword);
 
             if (user != null)
             {
-                Session.CurrentUser = "admin";
                 Session.CurrentUser = user.Login;
                 MainWindow window = new MainWindow();
                 window.Show();

@@ -55,7 +55,6 @@ namespace passwordmanager
                 return;
             }
 
-            string password = isPasswordVisible ? PasswordTextBox.Text : PasswordBox.Password;
             string category = (CategoryBox.SelectedItem as ComboBoxItem)?.Content.ToString();
 
             if (currentItem == null)
@@ -77,9 +76,12 @@ namespace passwordmanager
                 PasswordTextBox.Text = PasswordBox.Password;
             }
 
-            currentItem.Password = isPasswordVisible
-                ? PasswordTextBox.Text
-                : PasswordBox.Password;
+            string password = isPasswordVisible
+    ? PasswordTextBox.Text
+    : PasswordBox.Password;
+
+            currentItem.Password =
+                PasswordHelper.Encrypt(password);
 
             currentItem.Category =
                 (CategoryBox.SelectedItem as ComboBoxItem)?.Content.ToString();
@@ -206,8 +208,10 @@ namespace passwordmanager
 
             TitleBox.Text = selected.Title;
             LoginBox.Text = selected.Login;
-            PasswordBox.Password = selected.Password;
-            PasswordTextBox.Text = selected.Password;
+            string decryptedPassword = PasswordHelper.Decrypt(selected.Password);
+
+            PasswordBox.Password = decryptedPassword;
+            PasswordTextBox.Text = decryptedPassword;
             DescriptionBox.Text = selected.Description;
 
             foreach (ComboBoxItem item in CategoryBox.Items)

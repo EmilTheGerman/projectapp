@@ -53,7 +53,7 @@ namespace passwordmanager
             users.Add(new User
             {
                 Login = LoginBox.Text,
-                Password = PasswordBox.Password,
+                Password = PasswordHelper.HashPassword(PasswordBox.Password),
                 Role = "User"
             });
 
